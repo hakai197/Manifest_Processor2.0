@@ -1,0 +1,1037 @@
+{
+	"info": {
+		"_postman_id": "7180eccf-46d4-41e8-9abd-9f4af14b555f",
+		"name": "M2-Final_Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40274098"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let jsonData = pm.response.json();\r",
+							"pm.collectionVariables.set(\"token\", jsonData.token);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"strictSSL": false
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"user\",\r\n    \"password\": \"password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"mike\",\r\n    \"password\": \"password\",\r\n    \"confirmPassword\": \"password\",\r\n    \"role\": \"ROLE_USER\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Trailers",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/trailer",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"trailer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Trailer By Trailer Number ",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/trailer/{trailerNumber}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"trailer",
+						"{trailerNumber}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Trailer ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"trailerNumber\": \"OE3765\",\r\n    \"trailerType\": \"PUP\",\r\n    \"shipperId\": \"1\",\r\n    \"status\": \"Unassigned\"\r\n }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/trailer",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"trailer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Trailer ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"trailerNumber\": \"OE3765\", \r\n    \"trailerType\": \"REFRIGERATED\",  \r\n    \"shipperId\": 2,               \r\n    \"status\": \"Assigned\"          \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/trailer/{trailerNumber} ",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"trailer",
+						"{trailerNumber} "
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Trailer ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/trailer/{trailerNumber}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"trailer",
+						"{trailerNumber}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Shippers ",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/shipper",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"shipper"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Shipper by Name ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/shipper/name/{shipperName}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"shipper",
+						"name",
+						"{shipperName}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Shipper ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"R&L Carriers\", \r\n    \"address\": \"600 Gilliam Road\",\r\n    \"city\": \"Wilmington\",\r\n    \"state\": \"OH\",\r\n    \"zipCode\" : \"45701\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/shipper",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"shipper"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Shipper ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"R&L Carriers\", \r\n    \"address\": \"215 Curry Road\",\r\n    \"city\": \"Wilmington\",\r\n    \"state\": \"OH\",\r\n    \"zipCode\" : \"45701\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/shipper/{id} ",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"shipper",
+						"{id} "
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Shipper",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/shipper/{id}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"shipper",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Unloaders ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/unloader",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"unloader"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Unloader by Name ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/unloader/name/{name}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"unloader",
+						"name",
+						"{name}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New Unloader ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Nick Mathias\",\r\n    \"shift\": \"2nd Shift\",\r\n    \"employeeNumber\": \"155358\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/unloader",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"unloader"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Unloader ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Nick Mathias\",\r\n    \"shift\": \"1st Shift\",\r\n    \"employeeNumber\": \"155358\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/unloader/21",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"unloader",
+						"21"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Unloader ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/unloader/21",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"unloader",
+						"21"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Customers",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/customer",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"customer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Customer by Name",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/customer/name/{name}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"customer",
+						"name",
+						"{name}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New Customer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Buster Scruggs\",\r\n  \"address\": \"123 Shipping Lane\",\r\n  \"city\": \"Columbus\",\r\n  \"state\": \"OH\",\r\n  \"zipCode\": \"43215\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/customer",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"customer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Customer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"customerId\": 78,\r\n    \"name\": \"Buster Scruggs\",\r\n    \"address\": \"567 Westworld Lane\",\r\n    \"city\": \"Columbus\",\r\n    \"state\": \"OH\",\r\n    \"zipCode\": \"43215\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/customer/{id}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"customer",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Customer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/customer/{id}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"customer",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Orders ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Order by Trailer Number",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/orders/trailer/{trailerNumber}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"orders",
+						"trailer",
+						"{trailerNumber}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Order by Order Number ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/orders/number/{orderNumber} ",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"orders",
+						"number",
+						"{orderNumber} "
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Order By Customer Name ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/orders/customer/{customerName}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"orders",
+						"customer",
+						"{customerName}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Orders by Shipper Name ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/orders/shipper/{shipperName} ",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"orders",
+						"shipper",
+						"{shipperName} "
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Orders by Status ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/orders/status/{status}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"orders",
+						"status",
+						"{status}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New Order ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"orderNumber\": \"999999999\",\r\n    \"customerId\": 1, \r\n    \"shipperId\" : 1, \r\n    \"trailerId\": 1,\r\n    \"doorNumber\": \"Door 45\",\r\n    \"weight\": 500,\r\n    \"handlingUnit\": 2, \r\n    \"status\": \"shipped\"\r\n\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Order",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"orderNumber\": \"999999999\",\r\n    \"customerId\": 1, \r\n    \"shipperId\" : 1, \r\n    \"trailerId\": 1,\r\n    \"doorNumber\": \"Door 45\",\r\n    \"weight\": 500,\r\n    \"handlingUnit\": 2, \r\n    \"status\": \"Docked\"\r\n\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/orders/orderNumber/{orderNumber}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"orders",
+						"orderNumber",
+						"{orderNumber}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Order ",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/orders/orderNumber/(orderNumber)",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"orders",
+						"orderNumber",
+						"(orderNumber)"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "default"
+		},
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY1NzY0MzI3NH0.DVYTDK3fsn80scCDYSCxdN4itbTObMVVzlpJmNZd1pC-Uh1fjLwUPN-du-OjeUTFBtDWvEuPiVjXXd1L_Dzh-A",
+			"type": "default"
+		}
+	]
+}
