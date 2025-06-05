@@ -115,4 +115,11 @@ public class OrderNumber {
                 ", Status="+ status +
                 '}';
     }
+
+    public void setDoorId(int doorId) {
+    }
+
+    public Object getDoorId() {
+        return null;
+    }
 }

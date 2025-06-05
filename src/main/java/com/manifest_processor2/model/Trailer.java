@@ -5,7 +5,10 @@ public class Trailer {
     private String trailerNumber;
     private String trailerType;
     private int shipperId;
+    private String doorNumber;
     private String status;
+
+
 
     public Trailer() {
 
@@ -71,6 +74,13 @@ public class Trailer {
         this.status = status;
     }
 
+    public void setDoorId(int doorId) {
+    }
+
+    public Object getDoorId() {
+        return null;
+    }
+
     @Override
     public String toString() {
         return "Trailer{" +
@@ -80,5 +90,6 @@ public class Trailer {
                 ", status='" + status + '\'' +
                 '}';
     }
+
 
 }

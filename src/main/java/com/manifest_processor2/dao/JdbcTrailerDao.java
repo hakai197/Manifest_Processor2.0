@@ -1,6 +1,5 @@
 package com.manifest_processor2.dao;
 
-
 import com.manifest_processor2.exception.DaoException;
 import com.manifest_processor2.model.Trailer;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,7 +13,7 @@ import java.util.List;
 @Component
 public class JdbcTrailerDao implements TrailerDao {
     private final String TRAILER_SELECT = "SELECT t.trailer_id, t.trailer_number, t.trailer_type, " +
-            "t.shipper_id, t.status FROM trailer t ";
+            "t.shipper_id, t.status, t.door_id FROM trailer t ";
     private final JdbcTemplate jdbcTemplate;
 
     public JdbcTrailerDao(DataSource dataSource) {
@@ -67,18 +66,16 @@ public class JdbcTrailerDao implements TrailerDao {
 
     @Override
     public Trailer createTrailer(Trailer trailer) {
-        String sql = "INSERT INTO trailer (trailer_number, trailer_type, shipper_id, status) " +
-                "VALUES (?, ?, ?, ?) RETURNING trailer_id";
+        String sql = "INSERT INTO trailer (trailer_number, trailer_type, shipper_id, status, door_id) " +
+                "VALUES (?, ?, ?, ?, ?) RETURNING trailer_id";
         try {
             Integer newId = jdbcTemplate.queryForObject(sql, Integer.class,
                     trailer.getTrailerNumber(),
                     trailer.getTrailerType(),
                     trailer.getShipperId(),
-                    trailer.getStatus() != null ? trailer.getStatus() : "Unassigned");
+                    trailer.getStatus() != null ? trailer.getStatus() : "Unassigned",
+                    trailer.getDoorId());
 
-            if (newId == null) {
-                throw new DaoException("Creating trailer failed, no ID obtained");
-            }
             return getTrailerById(newId);
         } catch (Exception e) {
             throw new DaoException("Error creating trailer", e);
@@ -88,13 +85,14 @@ public class JdbcTrailerDao implements TrailerDao {
     @Override
     public Trailer updateTrailer(Trailer trailer) {
         String sql = "UPDATE trailer SET trailer_number = ?, trailer_type = ?, " +
-                "shipper_id = ?, status = ? WHERE trailer_id = ?";
+                "shipper_id = ?, status = ?, door_id = ? WHERE trailer_id = ?";
         try {
             int rowsAffected = jdbcTemplate.update(sql,
                     trailer.getTrailerNumber(),
                     trailer.getTrailerType(),
                     trailer.getShipperId(),
                     trailer.getStatus(),
+                    trailer.getDoorId(),
                     trailer.getTrailerId());
 
             if (rowsAffected == 0) {
@@ -123,7 +121,7 @@ public class JdbcTrailerDao implements TrailerDao {
 
     @Override
     public void unassignTrailer(String trailerNumber) {
-        String sql = "UPDATE trailer SET status = 'Unassigned', current_assignment = NULL WHERE trailer_number = ?";
+        String sql = "UPDATE trailer SET status = 'Unassigned', door_id = NULL WHERE trailer_number = ?";
         try {
             int rowsAffected = jdbcTemplate.update(sql, trailerNumber);
             if (rowsAffected == 0) {
@@ -136,14 +134,19 @@ public class JdbcTrailerDao implements TrailerDao {
 
     @Override
     public void assignUnloaderToTrailer(String trailerNumber, int employeeId) {
-        String sql = "UPDATE trailer SET status = 'Assigned', current_assignment = ? WHERE trailer_number = ?";
+
+    }
+
+    @Override
+    public void assignTrailerToDoor(String trailerNumber, int doorId) {
+        String sql = "UPDATE trailer SET status = 'Assigned', door_id = ? WHERE trailer_number = ?";
         try {
-            int rowsAffected = jdbcTemplate.update(sql, employeeId, trailerNumber);
+            int rowsAffected = jdbcTemplate.update(sql, doorId, trailerNumber);
             if (rowsAffected == 0) {
                 throw new DaoException("Trailer " + trailerNumber + " not found or not updated");
             }
         } catch (Exception e) {
-            throw new DaoException("Error assigning unloader to trailer " + trailerNumber, e);
+            throw new DaoException("Error assigning trailer " + trailerNumber + " to door", e);
         }
     }
 
@@ -153,7 +156,6 @@ public class JdbcTrailerDao implements TrailerDao {
         String deleteSql = "DELETE FROM trailer WHERE trailer_id = ?";
 
         try {
-
             int orderCount = jdbcTemplate.queryForObject(checkSql, Integer.class, id);
             if (orderCount > 0) {
                 throw new DaoException("Cannot delete trailer with associated orders");
@@ -180,6 +182,21 @@ public class JdbcTrailerDao implements TrailerDao {
         return null;
     }
 
+    @Override
+    public List<Trailer> getTrailersByDoorId(int doorId) {
+        List<Trailer> trailers = new ArrayList<>();
+        String sql = TRAILER_SELECT + "WHERE t.door_id = ?";
+        try {
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, doorId);
+            while (results.next()) {
+                trailers.add(mapRowToTrailer(results));
+            }
+        } catch (Exception e) {
+            throw new DaoException("Error accessing trailers by door", e);
+        }
+        return trailers;
+    }
+
     private Trailer mapRowToTrailer(SqlRowSet rs) {
         Trailer trailer = new Trailer();
         trailer.setTrailerId(rs.getInt("trailer_id"));
@@ -187,6 +204,7 @@ public class JdbcTrailerDao implements TrailerDao {
         trailer.setTrailerType(rs.getString("trailer_type"));
         trailer.setShipperId(rs.getInt("shipper_id"));
         trailer.setStatus(rs.getString("status"));
+        trailer.setDoorId(rs.getInt("door_id"));
         return trailer;
     }
 }

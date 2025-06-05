@@ -14,5 +14,13 @@ public interface UnloaderDao {
 
     List<Unloader> getAvailableUnloaders();
 
+    List<Unloader> getUnloadersByStatus(String status);
+
+    List<Unloader> getUnloadersByDoorId(int doorId);
+
+    boolean assignUnloaderToDoor(int unloaderId, int doorId);
+
+    boolean unassignUnloader(int unloaderId);
+
     Unloader getUnloaderByName(String name);
 }

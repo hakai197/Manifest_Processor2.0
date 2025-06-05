@@ -4,7 +4,26 @@ public class Unloader {
     private int employeeId;
     private String name;
     private String shift;
+    private String status;
+    private String doorNumber;
     private String employeeNumber;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getDoorNumber() {
+        return doorNumber;
+    }
+
+    public void setDoorNumber(String doorNumber) {
+        this.doorNumber = doorNumber;
+    }
+
 
 
     public int getEmployeeId() {
@@ -41,5 +60,12 @@ public class Unloader {
 
     public int getUnloaderId() {
         return employeeId;
+    }
+
+    public void setDoorId(int doorId) {
+    }
+
+    public Object getDoorId() {
+        return null;
     }
 }

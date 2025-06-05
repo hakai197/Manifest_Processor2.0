@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS Customer CASCADE;
 DROP TABLE IF EXISTS Trailer CASCADE;
 DROP TABLE IF EXISTS Shipper CASCADE;
 DROP TABLE IF EXISTS Unloader CASCADE;
+DROP TABLE IF EXISTS Dock_Door CASCADE;
 
 -- *************************************************************************************************
 -- Create the tables and constraints
@@ -30,14 +31,25 @@ CREATE TABLE Shipper (
     CONSTRAINT PK_Shipper PRIMARY KEY (shipper_id)
 );
 
+CREATE TABLE Dock_Door (
+    door_id SERIAL,
+    door_number VARCHAR(10) NOT NULL,
+    door_location VARCHAR(15) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'Unassigned',
+    CONSTRAINT PK_Dock_Door PRIMARY KEY (door_id),
+    CONSTRAINT UQ_Door_number UNIQUE (door_number)
+);
+
 CREATE TABLE Trailer (
     trailer_id SERIAL,
     trailer_number VARCHAR(20) NOT NULL,
     trailer_type VARCHAR(50) NOT NULL,
     shipper_id INTEGER NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'Unassigned',
+    door_id INTEGER NULL,
     CONSTRAINT PK_Trailer PRIMARY KEY (trailer_id),
     CONSTRAINT FK_Trailer_Shipper FOREIGN KEY (shipper_id) REFERENCES Shipper(shipper_id) ON DELETE CASCADE,
+    CONSTRAINT FK_Trailer_Dock_Door FOREIGN KEY (door_id) REFERENCES Dock_Door(door_id),
     CONSTRAINT UQ_Trailer_number UNIQUE (trailer_number)
 );
 
@@ -57,7 +69,9 @@ CREATE TABLE Unloader (
     shift VARCHAR(100) NOT NULL,
     employee_number VARCHAR(100) NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'Unassigned',
+    door_id INTEGER NULL,
     CONSTRAINT PK_Unloader PRIMARY KEY (employee_id),
+    CONSTRAINT FK_Unloader_Dock_Door FOREIGN KEY (door_id) REFERENCES Dock_Door(door_id),
     CONSTRAINT UQ_Employee_number UNIQUE (employee_number)
 );
 
@@ -67,15 +81,18 @@ CREATE TABLE Order_Number (
     customer_id INTEGER NOT NULL,
     shipper_id INTEGER NOT NULL,
     trailer_id INTEGER NOT NULL,
-    door_number VARCHAR(10) NOT NULL,
+    door_id INTEGER NULL,
     handling_unit INTEGER NOT NULL,
     weight INTEGER NOT NULL,
-    status VARCHAR (20) NOT NULL,
+    status VARCHAR(20) NOT NULL,
     CONSTRAINT PK_Order_Number PRIMARY KEY (order_id),
     CONSTRAINT FK_Order_Number_Customer FOREIGN KEY (customer_id) REFERENCES Customer(customer_id) ON DELETE CASCADE,
     CONSTRAINT FK_Order_Number_Shipper FOREIGN KEY (shipper_id) REFERENCES Shipper(shipper_id) ON DELETE CASCADE,
-    CONSTRAINT FK_Order_Number_Trailer FOREIGN KEY (trailer_id) REFERENCES Trailer(trailer_id) ON DELETE CASCADE
+    CONSTRAINT FK_Order_Number_Trailer FOREIGN KEY (trailer_id) REFERENCES Trailer(trailer_id) ON DELETE CASCADE,
+    CONSTRAINT FK_Order_Number_Dock_Door FOREIGN KEY (door_id) REFERENCES Dock_Door(door_id)
 );
+
+COMMIT;
 -- *************************************************************************************************
 -- Insert some sample starting data
 -- *************************************************************************************************
@@ -86,11 +103,10 @@ INSERT INTO Shipper (name, address, city, state, zip_code) VALUES
 ('Elite Shipping Co.', '800 Transport Blvd', 'Los Angeles', 'CA', '90012');
 
 
-INSERT INTO Trailer (trailer_number, trailer_type, shipper_id, status) VALUES
-('OF1234', 'Local/City', 1, 'Unassigned'),
-('LE4567', 'Lift-Gate', 2, 'Unassigned'),
-('B2389', 'Box Truck', 3, 'Unassigned');
-
+INSERT INTO Trailer (trailer_number, trailer_type, shipper_id, status, door_id) VALUES
+('OF1234', 'Local/City', 1, 'Unassigned', NULL),
+('LE4567', 'Lift-Gate', 2, 'Unassigned', NULL),
+('B2389', 'Box Truck', 3, 'Unassigned', NULL);
 
 INSERT INTO Customer (name, address, city, state, zip_code) VALUES
 ('John Doe', '123 Maple Street', 'Boston', 'MA', '02108'),
@@ -173,110 +189,147 @@ INSERT INTO Customer (name, address, city, state, zip_code) VALUES
 
 
 -- OF1234 Trailer Orders
-INSERT INTO Order_Number (order_number, customer_id, shipper_id, trailer_id, door_number, handling_unit, weight,status) VALUES
-('123456789', 1, 1, 1, 'Door 7', 2, 61, 'shipped'),
-('234567891', 2, 1, 1, 'Door 33', 4, 113, 'shipped'),
-('345678911', 3, 1, 1, 'Door 19', 6, 99, 'shipped'),
-('456789123', 4, 1, 1, 'Door 28', 5, 65, 'shipped'),
-('567891234', 5, 1, 1, 'Door 50', 8, 71, 'shipped'),
-('678912345', 6, 1, 1, 'Door 14', 3, 103, 'shipped'),
-('789123456', 7, 1, 1, 'Door 37', 2, 58, 'shipped'),
-('891234567', 8, 1, 1, 'Door 1', 9, 75, 'shipped'),
-('912345678', 9, 1, 1, 'Door 22', 1, 89, 'shipped'),
-('123456780', 10, 1, 1, 'Door 40', 7, 91, 'shipped'),
-('234567801', 11, 1, 1, 'Door 5', 3, 102, 'shipped'),
-('345678902', 12, 1, 1, 'Door 48', 2, 63, 'shipped'),
-('456789103', 13, 1, 1, 'Door 26', 4, 111, 'shipped'),
-('567891214', 14, 1, 1, 'Door 11', 6, 93, 'shipped'),
-('678912325', 15, 1, 1, 'Door 30', 5, 61, 'shipped'),
-('789123436', 16, 1, 1, 'Door 49', 3, 83, 'shipped'),
-('891234547', 17, 1, 1, 'Door 17', 8, 116, 'shipped'),
-('912345658', 18, 1, 1, 'Door 36', 7, 80, 'shipped'),
-('123456769', 19, 1, 1, 'Door 8', 9, 57, 'shipped'),
-('234567890', 20, 1, 1, 'Door 44', 2, 66, 'shipped'),
-('345678901', 21, 1, 1, 'Door 21', 4, 109, 'shipped'),
-('456789012', 22, 1, 1, 'Door 39', 5, 98, 'shipped'),
-('567891123', 23, 1, 1, 'Door 25', 3, 82, 'shipped'),
-('678912234', 24, 1, 1, 'Door 16', 6, 105, 'shipped'),
-('789123345', 25, 1, 1, 'Door 34', 7, 117, 'shipped'),
-('123456677', 26, 1, 1, 'Door 27', 5, 77, 'shipped'),
-('234567788', 27, 2, 2, 'Door 34', 7, 117, 'shipped'),
-('345678899', 28, 2, 2, 'Door 27', 5, 77, 'shipped'),
-('456789900', 29, 2, 2, 'Door 10', 4, 102, 'shipped'),
-('567891011', 30, 2, 2, 'Door 11', 4, 100, 'shipped'),
-('678912122', 31, 2, 2, 'Door 12', 4, 101, 'shipped'),
-('789123233', 32, 2, 2, 'Door 13', 5, 99, 'shipped'),
-('891234344', 33, 2, 2, 'Door 14', 5, 103, 'shipped'),
-('912345455', 34, 2, 2, 'Door 15', 6, 96, 'shipped'),
-('123456566', 35, 2, 2, 'Door 16', 6, 105, 'shipped'),
-('234567677', 36, 2, 2, 'Door 17', 4, 95, 'shipped'),
-('345678788', 37, 2, 2, 'Door 18', 5, 100, 'shipped'),
-('456789899', 38, 2, 2, 'Door 19', 5, 97, 'shipped'),
-('567891000', 39, 2, 2, 'Door 20', 4, 98, 'shipped'),
-('678912111', 40, 2, 2, 'Door 21', 4, 99, 'shipped'),
-('789123222', 41, 2, 2, 'Door 22', 4, 100, 'shipped'),
-('891234333', 42, 2, 2, 'Door 23', 4, 101, 'shipped'),
-('912345444', 43, 2, 2, 'Door 24', 4, 102, 'shipped'),
-('123456555', 44, 2, 2, 'Door 25', 4, 103, 'shipped'),
-('234567666', 45, 2, 2, 'Door 26', 4, 104, 'shipped'),
-('345678777', 46, 2, 2, 'Door 27', 4, 105, 'shipped'),
-('456789888', 47, 2, 2, 'Door 28', 4, 106, 'shipped'),
-('567890999', 48, 2, 2, 'Door 29', 4, 107, 'shipped'),
-('678911111', 49, 2, 2, 'Door 30', 4, 108, 'shipped'),
-('789122222', 50, 2, 2, 'Door 31', 4, 109, 'shipped'),
-('891233333', 51, 2, 2, 'Door 32', 4, 110, 'shipped'),
-('912345442', 52, 2, 2, 'Door 33', 4, 111, 'shipped'),
-('123456553', 53, 3, 3, 'Door 11', 5, 103, 'shipped'),
-('234567664', 54, 3, 3, 'Door 12', 5, 97, 'shipped'),
-('345678775', 55, 3, 3, 'Door 13', 6, 105, 'shipped'),
-('456789886', 56, 3, 3, 'Door 14', 4, 94, 'shipped'),
-('567891997', 57, 3, 3, 'Door 15', 4, 91, 'shipped'),
-('678912108', 58, 3, 3, 'Door 16', 5, 108, 'shipped'),
-('789123219', 59, 3, 3, 'Door 17', 6, 95, 'shipped'),
-('891234330', 60, 3, 3, 'Door 18', 7, 99, 'shipped'),
-('912345441', 61, 3, 3, 'Door 19', 5, 102, 'shipped'),
-('123456552', 62, 3, 3, 'Door 20', 5, 100, 'shipped'),
-('234567663', 63, 3, 3, 'Door 21', 6, 101, 'shipped'),
-('345678774', 64, 3, 3, 'Door 22', 5, 97, 'shipped'),
-('456789885', 65, 3, 3, 'Door 23', 4, 96, 'shipped'),
-('567891996', 66, 3, 3, 'Door 24', 6, 106, 'shipped'),
-('678912107', 67, 3, 3, 'Door 25', 5, 99, 'shipped'),
-('789123218', 68, 3, 3, 'Door 26', 5, 104, 'shipped'),
-('891234329', 69, 3, 3, 'Door 27', 4, 93, 'shipped'),
-('912345440', 70, 3, 3, 'Door 28', 6, 98, 'shipped'),
-('123456551', 71, 3, 3, 'Door 29', 4, 91, 'shipped'),
-('234567662', 72, 3, 3, 'Door 30', 5, 107, 'shipped'),
-('345678773', 73, 3, 3, 'Door 31', 5, 96, 'shipped'),
-('456789884', 74, 3, 3, 'Door 32', 6, 103, 'shipped'),
-('567891995', 75, 3, 3, 'Door 33', 4, 94, 'shipped'),
-('678912106', 76, 3, 3, 'Door 34', 5, 100, 'shipped');
+-- Note: I'm using NULL for door_id since the original data used door numbers as strings
+INSERT INTO Order_Number (order_number, customer_id, shipper_id, trailer_id, door_id, handling_unit, weight, status) VALUES
+('123456789', 1, 1, 1, NULL, 2, 61, 'shipped'),
+('234567891', 2, 1, 1, NULL, 4, 113, 'shipped'),
+('345678911', 3, 1, 1, NULL, 6, 99, 'shipped'),
+('456789123', 4, 1, 1, NULL, 5, 65, 'shipped'),
+('567891234', 5, 1, 1, NULL, 8, 71, 'shipped'),
+('678912345', 6, 1, 1, NULL, 3, 103, 'shipped'),
+('789123456', 7, 1, 1, NULL, 2, 58, 'shipped'),
+('891234567', 8, 1, 1, NULL, 9, 75, 'shipped'),
+('912345678', 9, 1, 1, NULL, 1, 89, 'shipped'),
+('123456780', 10, 1, 1, NULL, 7, 91, 'shipped'),
+('234567801', 11, 1, 1, NULL, 3, 102, 'shipped'),
+('345678902', 12, 1, 1, NULL, 2, 63, 'shipped'),
+('456789103', 13, 1, 1, NULL, 4, 111, 'shipped'),
+('567891214', 14, 1, 1, NULL, 6, 93, 'shipped'),
+('678912325', 15, 1, 1, NULL, 5, 61, 'shipped'),
+('789123436', 16, 1, 1, NULL, 3, 83, 'shipped'),
+('891234547', 17, 1, 1, NULL, 8, 116, 'shipped'),
+('912345658', 18, 1, 1, NULL, 7, 80, 'shipped'),
+('123456769', 19, 1, 1, NULL, 9, 57, 'shipped'),
+('234567890', 20, 1, 1, NULL, 2, 66, 'shipped'),
+('345678901', 21, 1, 1, NULL, 4, 109, 'shipped'),
+('456789012', 22, 1, 1, NULL, 5, 98, 'shipped'),
+('567891123', 23, 1, 1, NULL, 3, 82, 'shipped'),
+('678912234', 24, 1, 1, NULL, 6, 105, 'shipped'),
+('789123345', 25, 1, 1, NULL, 7, 117, 'shipped'),
+('123456677', 26, 1, 1, NULL, 5, 77, 'shipped'),
+('234567788', 27, 2, 2, NULL, 7, 117, 'shipped'),
+('345678899', 28, 2, 2, NULL, 5, 77, 'shipped'),
+('456789900', 29, 2, 2, NULL, 4, 102, 'shipped'),
+('567891011', 30, 2, 2, NULL, 4, 100, 'shipped'),
+('678912122', 31, 2, 2, NULL, 4, 101, 'shipped'),
+('789123233', 32, 2, 2, NULL, 5, 99, 'shipped'),
+('891234344', 33, 2, 2, NULL, 5, 103, 'shipped'),
+('912345455', 34, 2, 2, NULL, 6, 96, 'shipped'),
+('123456566', 35, 2, 2, NULL, 6, 105, 'shipped'),
+('234567677', 36, 2, 2, NULL, 4, 95, 'shipped'),
+('345678788', 37, 2, 2, NULL, 5, 100, 'shipped'),
+('456789899', 38, 2, 2, NULL, 5, 97, 'shipped'),
+('567891000', 39, 2, 2, NULL, 4, 98, 'shipped'),
+('678912111', 40, 2, 2, NULL, 4, 99, 'shipped'),
+('789123222', 41, 2, 2, NULL, 4, 100, 'shipped'),
+('891234333', 42, 2, 2, NULL, 4, 101, 'shipped'),
+('912345444', 43, 2, 2, NULL, 4, 102, 'shipped'),
+('123456555', 44, 2, 2, NULL, 4, 103, 'shipped'),
+('234567666', 45, 2, 2, NULL, 4, 104, 'shipped'),
+('345678777', 46, 2, 2, NULL, 4, 105, 'shipped'),
+('456789888', 47, 2, 2, NULL, 4, 106, 'shipped'),
+('567890999', 48, 2, 2, NULL, 4, 107, 'shipped'),
+('678911111', 49, 2, 2, NULL, 4, 108, 'shipped'),
+('789122222', 50, 2, 2, NULL, 4, 109, 'shipped'),
+('891233333', 51, 2, 2, NULL, 4, 110, 'shipped'),
+('912345442', 52, 2, 2, NULL, 4, 111, 'shipped'),
+('123456553', 53, 3, 3, NULL, 5, 103, 'shipped'),
+('234567664', 54, 3, 3, NULL, 5, 97, 'shipped'),
+('345678775', 55, 3, 3, NULL, 6, 105, 'shipped'),
+('456789886', 56, 3, 3, NULL, 4, 94, 'shipped'),
+('567891997', 57, 3, 3, NULL, 4, 91, 'shipped'),
+('678912108', 58, 3, 3, NULL, 5, 108, 'shipped'),
+('789123219', 59, 3, 3, NULL, 6, 95, 'shipped'),
+('891234330', 60, 3, 3, NULL, 7, 99, 'shipped'),
+('912345441', 61, 3, 3, NULL, 5, 102, 'shipped'),
+('123456552', 62, 3, 3, NULL, 5, 100, 'shipped'),
+('234567663', 63, 3, 3, NULL, 6, 101, 'shipped'),
+('345678774', 64, 3, 3, NULL, 5, 97, 'shipped'),
+('456789885', 65, 3, 3, NULL, 4, 96, 'shipped'),
+('567891996', 66, 3, 3, NULL, 6, 106, 'shipped'),
+('678912107', 67, 3, 3, NULL, 5, 99, 'shipped'),
+('789123218', 68, 3, 3, NULL, 5, 104, 'shipped'),
+('891234329', 69, 3, 3, NULL, 4, 93, 'shipped'),
+('912345440', 70, 3, 3, NULL, 6, 98, 'shipped'),
+('123456551', 71, 3, 3, NULL, 4, 91, 'shipped'),
+('234567662', 72, 3, 3, NULL, 5, 107, 'shipped'),
+('345678773', 73, 3, 3, NULL, 5, 96, 'shipped'),
+('456789884', 74, 3, 3, NULL, 6, 103, 'shipped'),
+('567891995', 75, 3, 3, NULL, 4, 94, 'shipped'),
+('678912106', 76, 3, 3, NULL, 5, 100, 'shipped');
 
-INSERT INTO Unloader (name, shift, employee_number, status) VALUES
-('John Smith', '2nd Shift', '45782', 'Unassigned'),
-('Emily Johnson', '2nd Shift', '39821', 'Unassigned'),
-('Michael Williams', '2nd Shift', '61245', 'Unassigned'),
-('Sarah Brown', '2nd Shift', '53467', 'Unassigned'),
-('David Jones', '2nd Shift', '78934', 'Unassigned'),
-('Olivia Garcia', '2nd Shift', '24589', 'Unassigned'),
-('James Martinez', '2nd Shift', '87653', 'Unassigned'),
-('Emma Rodriguez', '2nd Shift', '32176', 'Unassigned'),
-('Robert Hernandez', '2nd Shift', '65432', 'Unassigned'),
-('Sophia Lopez', '2nd Shift', '98712', 'Unassigned'),
-('William Gonzalez', '2nd Shift', '12345', 'Unassigned'),
-('Ava Wilson', '2nd Shift', '56789', 'Unassigned'),
-('Joseph Anderson', '2nd Shift', '43210', 'Unassigned'),
-('Mia Thomas', '2nd Shift', '67895', 'Unassigned'),
-('Charles Taylor', '2nd Shift', '34567', 'Unassigned'),
-('Isabella Moore', '2nd Shift', '89012', 'Unassigned'),
-('Daniel Jackson', '2nd Shift', '76543', 'Unassigned'),
-('Amelia Martin', '2nd Shift', '21098', 'Unassigned'),
-('Jane Davis', '2nd Shift', '87654', 'Unassigned'),
-('Thomas Miller', '2nd Shift', '10987', 'Unassigned');
+INSERT INTO Unloader (name, shift, employee_number, status, door_id) VALUES
+('John Smith', '2nd Shift', '45782', 'Unassigned', NULL),
+('Emily Johnson', '2nd Shift', '39821', 'Unassigned', NULL),
+('Michael Williams', '2nd Shift', '61245', 'Unassigned', NULL),
+('Sarah Brown', '2nd Shift', '53467', 'Unassigned', NULL),
+('David Jones', '2nd Shift', '78934', 'Unassigned', NULL),
+('Olivia Garcia', '2nd Shift', '24589', 'Unassigned', NULL),
+('James Martinez', '2nd Shift', '87653', 'Unassigned', NULL),
+('Emma Rodriguez', '2nd Shift', '32176', 'Unassigned', NULL),
+('Robert Hernandez', '2nd Shift', '65432', 'Unassigned', NULL),
+('Sophia Lopez', '2nd Shift', '98712', 'Unassigned', NULL),
+('William Gonzalez', '2nd Shift', '12345', 'Unassigned', NULL),
+('Ava Wilson', '2nd Shift', '56789', 'Unassigned', NULL),
+('Joseph Anderson', '2nd Shift', '43210', 'Unassigned', NULL),
+('Mia Thomas', '2nd Shift', '67895', 'Unassigned', NULL),
+('Charles Taylor', '2nd Shift', '34567', 'Unassigned', NULL),
+('Isabella Moore', '2nd Shift', '89012', 'Unassigned', NULL),
+('Daniel Jackson', '2nd Shift', '76543', 'Unassigned', NULL),
+('Amelia Martin', '2nd Shift', '21098', 'Unassigned', NULL),
+('Jane Davis', '2nd Shift', '87654', 'Unassigned', NULL),
+('Thomas Miller', '2nd Shift', '10987', 'Unassigned', NULL);
 
 -- Insert Users
 -- Password for all users is password
 INSERT INTO users (username, password_hash, role) VALUES
 ('user', '$2a$10$tmxuYYg1f5T0eXsTPlq/V.DJUKmRHyFbJ.o.liI1T35TFbjs2xiem', 'ROLE_USER'),
 ('admin', '$2a$10$tmxuYYg1f5T0eXsTPlq/V.DJUKmRHyFbJ.o.liI1T35TFbjs2xiem', 'ROLE_ADMIN');
+
+INSERT INTO Dock_Door (door_number, door_location, status) VALUES
+-- Building 1 (North Side)
+('1-1', 'North', 'Unassigned'), ('1-2', 'North', 'Unassigned'),
+('1-3', 'North', 'Unassigned'), ('1-4', 'North', 'Unassigned'),
+('1-5', 'North', 'Unassigned'), ('1-6', 'North', 'Unassigned'),
+('1-7', 'North', 'Unassigned'), ('1-8', 'North', 'Unassigned'),
+('1-9', 'North', 'Unassigned'), ('1-10', 'North', 'Unassigned'),
+
+-- Building 2 (East Side)
+('2-1', 'East', 'Unassigned'), ('2-2', 'East', 'Unassigned'),
+('2-3', 'East', 'Unassigned'), ('2-4', 'East', 'Unassigned'),
+('2-5', 'East', 'Unassigned'), ('2-6', 'East', 'Unassigned'),
+('2-7', 'East', 'Unassigned'), ('2-8', 'East', 'Unassigned'),
+('2-9', 'East', 'Unassigned'), ('2-10', 'East', 'Unassigned'),
+
+-- Building 3 (South Side)
+('3-1', 'South', 'Unassigned'), ('3-2', 'South', 'Unassigned'),
+('3-3', 'South', 'Unassigned'), ('3-4', 'South', 'Unassigned'),
+('3-5', 'South', 'Unassigned'), ('3-6', 'South', 'Unassigned'),
+('3-7', 'South', 'Unassigned'), ('3-8', 'South', 'Unassigned'),
+('3-9', 'South', 'Unassigned'), ('3-10', 'South', 'Unassigned'),
+
+-- Building 4 (West Side)
+('4-1', 'West', 'Unassigned'), ('4-2', 'West', 'Unassigned'),
+('4-3', 'West', 'Unassigned'), ('4-4', 'West', 'Unassigned'),
+('4-5', 'West', 'Unassigned'), ('4-6', 'West', 'Unassigned'),
+('4-7', 'West', 'Unassigned'), ('4-8', 'West', 'Unassigned'),
+('4-9', 'West', 'Unassigned'), ('4-10', 'West', 'Unassigned'),
+
+-- Building 5 (Central)
+('5-1', 'Central', 'Unassigned'), ('5-2', 'Central', 'Unassigned'),
+('5-3', 'Central', 'Unassigned'), ('5-4', 'Central', 'Unassigned'),
+('5-5', 'Central', 'Unassigned'), ('5-6', 'Central', 'Unassigned'),
+('5-7', 'Central', 'Unassigned'), ('5-8', 'Central', 'Unassigned'),
+('5-9', 'Central', 'Unassigned'), ('5-10', 'Central', 'Unassigned');
 
 COMMIT TRANSACTION;

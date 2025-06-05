@@ -1,7 +1,8 @@
 package com.manifest_processor2.security;
 
-import com.techelevator.custom.security.jwt.JwtCustomDsl;
-import com.techelevator.custom.security.jwt.TokenProvider;
+
+import com.manifest_processor2.security.jwt.JwtCustomDsl;
+import com.manifest_processor2.security.jwt.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

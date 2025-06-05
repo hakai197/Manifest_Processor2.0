@@ -15,6 +15,11 @@ public interface TrailerDao {
     List<Trailer> getAvailableTrailers();
     void unassignTrailer(String trailerNumber);
     void assignUnloaderToTrailer(String trailerNumber, int employeeId);
+
+    void assignTrailerToDoor(String trailerNumber, int doorId);
+
     boolean deleteTrailer(int id);
     Trailer getTrailerByNumber(String trailerNumber);
+
+    List<Trailer> getTrailersByDoorId(int doorId);
 }

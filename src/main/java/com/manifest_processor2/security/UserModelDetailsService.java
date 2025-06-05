@@ -1,7 +1,8 @@
 package com.manifest_processor2.security;
 
-import com.techelevator.custom.dao.UserDao;
-import com.techelevator.custom.model.User;
+
+import com.manifest_processor2.dao.UserDao;
+import com.manifest_processor2.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
