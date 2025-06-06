@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7180eccf-46d4-41e8-9abd-9f4af14b555f",
+		"_postman_id": "60d855e6-d343-4d2a-8525-c4c79f02e217",
 		"name": "Manifest Processor 2.0",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "40274098"
@@ -84,13 +84,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/trailer",
+					"raw": "{{baseUrl}}/api/trailers",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"trailer"
+						"trailers"
 					]
 				}
 			},
@@ -105,13 +105,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/trailer/{trailerNumber}",
+					"raw": "{{baseUrl}}/api/trailers/{trailerNumber}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"trailer",
+						"trailers",
 						"{trailerNumber}"
 					]
 				}
@@ -143,13 +143,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/trailer",
+					"raw": "{{baseUrl}}/api/trailers",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"trailer"
+						"trailers"
 					]
 				}
 			},
@@ -180,13 +180,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/trailer/{trailerNumber} ",
+					"raw": "{{baseUrl}}/api/trailers/{trailerNumber} ",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"trailer",
+						"trailers",
 						"{trailerNumber} "
 					]
 				}
@@ -209,13 +209,13 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/trailer/{trailerNumber}",
+					"raw": "{{baseUrl}}/api/trailers/{trailerNumber}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"trailer",
+						"trailers",
 						"{trailerNumber}"
 					]
 				}
@@ -250,13 +250,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/shipper",
+					"raw": "{{baseUrl}}/api/shippers",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"shipper"
+						"shippers"
 					]
 				}
 			},
@@ -278,13 +278,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/shipper/name/{shipperName}",
+					"raw": "{{baseUrl}}/api/shippers/name/{shipperName}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"shipper",
+						"shippers",
 						"name",
 						"{shipperName}"
 					]
@@ -317,13 +317,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/shipper",
+					"raw": "{{baseUrl}}/api/shippers",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"shipper"
+						"shippers"
 					]
 				}
 			},
@@ -354,13 +354,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/shipper/{id} ",
+					"raw": "{{baseUrl}}/api/shippers/{id} ",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"shipper",
+						"shippers",
 						"{id} "
 					]
 				}
@@ -383,13 +383,13 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/shipper/{id}",
+					"raw": "{{baseUrl}}/api/shippers/{id}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"shipper",
+						"shippers",
 						"{id}"
 					]
 				}
@@ -412,13 +412,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/unloader",
+					"raw": "{{baseUrl}}/api/unloaders",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"unloader"
+						"unloaders"
 					]
 				}
 			},
@@ -440,13 +440,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/unloader/name/{name}",
+					"raw": "{{baseUrl}}/api/unloaders/name/{name}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"unloader",
+						"unloaders",
 						"name",
 						"{name}"
 					]
@@ -479,13 +479,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/unloader",
+					"raw": "{{baseUrl}}/api/unloaders",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"unloader"
+						"unloaders"
 					]
 				}
 			},
@@ -516,14 +516,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/unloader/21",
+					"raw": "{{baseUrl}}/api/unloader/{id}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
 						"unloader",
-						"21"
+						"{id}"
 					]
 				}
 			},
@@ -545,14 +545,14 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/unloader/21",
+					"raw": "{{baseUrl}}/api/unloaders/{id}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"unloader",
-						"21"
+						"unloaders",
+						"{id}"
 					]
 				}
 			},
@@ -567,13 +567,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/customer",
+					"raw": "{{baseUrl}}/api/customers",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"customer"
+						"customers"
 					]
 				}
 			},
@@ -595,13 +595,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/customer/name/{name}",
+					"raw": "{{baseUrl}}/api/customers/name/{name}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"customer",
+						"customers",
 						"name",
 						"{name}"
 					]
@@ -634,13 +634,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/customer",
+					"raw": "{{baseUrl}}/api/customers",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"customer"
+						"customers"
 					]
 				}
 			},
@@ -671,13 +671,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/customer/{id}",
+					"raw": "{{baseUrl}}/api/customers/{id}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"customer",
+						"customers",
 						"{id}"
 					]
 				}
@@ -700,13 +700,13 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/customer/{id}",
+					"raw": "{{baseUrl}}/api/customers/{id}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"customer",
+						"customers",
 						"{id}"
 					]
 				}
@@ -757,7 +757,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/orders/trailer/{trailerNumber}",
+					"raw": "http://localhost:8080/api/orders/{trailerNumber/orders",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -766,8 +766,8 @@
 					"path": [
 						"api",
 						"orders",
-						"trailer",
-						"{trailerNumber}"
+						"{trailerNumber",
+						"orders"
 					]
 				}
 			},
