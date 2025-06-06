@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/unloader")
+@RequestMapping(path = "api/unloaders")
 
 public class UnloaderController {
     private final UnloaderDao unloaderDao;

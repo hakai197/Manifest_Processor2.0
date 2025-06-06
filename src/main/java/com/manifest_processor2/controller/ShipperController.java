@@ -13,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/shipper")
+@RequestMapping(path = "api/shippers")
 public class ShipperController {
     private final ShipperDao shipperDao;
 

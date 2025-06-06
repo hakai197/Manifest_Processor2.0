@@ -46,7 +46,7 @@ public class OrderNumberController {
         }
     }
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    @GetMapping("/trailer/{trailerNumber}")
+    @GetMapping("/{trailerNumber}/orders")
     public List<OrderNumber> getOrdersByTrailerNumber(@PathVariable String trailerNumber) {
         try {
             List<OrderNumber> orders = orderNumberDao.getOrdersByTrailerNumber(trailerNumber);
@@ -59,7 +59,7 @@ public class OrderNumberController {
         }
     }
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    @GetMapping("/customer/{customerName}")
+    @GetMapping("/customers/{customerName}")
     public List<OrderNumber>getOrdersByCustomerName(@PathVariable String customerName) {
         try {
             List<OrderNumber> orders = orderNumberDao.getOrdersByCustomerName(customerName);
@@ -72,7 +72,7 @@ public class OrderNumberController {
         }
     }
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    @GetMapping("/shipper/{shipperName}")
+    @GetMapping("/shippers/{shipperName}")
     public List<OrderNumber> getOrdersByShipperName(@PathVariable String shipperName) {
         try {
             List<OrderNumber> orders = orderNumberDao.getOrdersByShipperName(shipperName);
@@ -131,7 +131,7 @@ public class OrderNumberController {
         }
     }
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/orderNumber/{orderNumber}")
+    @DeleteMapping("/orderNumbers/{orderNumber}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteOrder(@PathVariable String orderNumber) {
         try {
