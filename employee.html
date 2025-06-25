@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Employee Management | Dock Management System</title>
+    <link rel="icon" href="./icon/custom.ico">
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo-container">
+        <img src="img/NMShipping.png" alt="NM Shipping Logo">
+      </div>
+      <div class="header-top">
+        <h1>Employee Management</h1>
+      </div>
+      
+      <nav class="desktop-nav">
+        <ul>
+          <li><a href="index.html" class="nav-btn">Dashboard</a></li>
+          <li><a href="assignment.html" class="nav-btn">Assignment Manager</a></li>
+          <li><a href="trailer.html" class="nav-btn">Trailer Management</a></li>
+          <li><a href="shipper.html" class="nav-btn">Shipper Management</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="dashboard-grid">
+        <div class="dashboard-card wide-card">
+          <div class="card-header">Employee List</div>
+          <div class="filter-container">
+            <input type="text" id="employee-filter" placeholder="Filter employees...">
+          </div>
+          <div class="card-content">
+            <table class="management-table">
+              <thead>
+                <tr>
+                  <th>Employee ID</th>
+                  <th>Name</th>
+                  <th>Position</th>
+                  <th>Status</th>
+                  <th>Phone</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="employees-table">
+                
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div class="dashboard-card">
+          <div class="card-header">Add/Edit Employee</div>
+          <div class="card-content">
+            <form id="employee-form">
+              <input type="hidden" id="employee-id">
+              <div class="form-group">
+                <label for="employee-firstname">First Name:</label>
+                <input type="text" id="employee-firstname" required>
+              </div>
+              <div class="form-group">
+                <label for="employee-lastname">Last Name:</label>
+                <input type="text" id="employee-lastname" required>
+              </div>
+              <div class="form-group">
+                <label for="employee-position">Position:</label>
+                <select id="employee-position" required>
+                  <option value="unloader">Unloader</option>
+                  <option value="supervisor">Supervisor</option>
+                  <option value="manager">Manager</option>
+                  <option value="admin">Administrator</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="employee-status">Status:</label>
+                <select id="employee-status" required>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="onleave">On Leave</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="employee-phone">Phone:</label>
+                <input type="tel" id="employee-phone" required>
+              </div>
+              <button type="submit" class="submit-btn">Save Employee</button>
+              <button type="button" id="clear-employee-form" class="cancel-btn">Clear Form</button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Manifest Processor All Rights Reserved</p>
+    </footer>
+
+    <script src="script/resourceService.js"></script>
+    <script src="script/employee.js"></script>
+  </body>
+</html>

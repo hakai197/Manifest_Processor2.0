@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Shipper Management | Dock Management System</title>
+    <link rel="icon" href="./icon/custom.ico">
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo-container">
+        <img src="img/NMShipping.png" alt="NM Shipping Logo">
+      </div>
+      <div class="header-top">
+        <h1>Shipper Management</h1>
+      </div>
+      
+      <nav class="desktop-nav">
+        <ul>
+          <li><a href="index.html" class="nav-btn">Dashboard</a></li>
+          <li><a href="assingment.html" class="nav-btn">Assignment Manager</a></li>
+          <li><a href="trailer.html" class="nav-btn">Trailer Management</a></li>
+          <li><a href="employee.html" class="nav-btn">Employee Management</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="dashboard-grid">
+        <div class="dashboard-card wide-card">
+          <div class="card-header">Shipper List</div>
+          <div class="filter-container">
+            <input type="text" id="shipper-filter" placeholder="Filter shippers...">
+          </div>
+          <div class="card-content">
+            <table class="management-table">
+              <thead>
+                <tr>
+                  <th>Shipper ID</th>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="shippers-table">
+                <!-- Will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div class="dashboard-card">
+          <div class="card-header">Add/Edit Shipper</div>
+          <div class="card-content">
+            <form id="shipper-form">
+              <input type="hidden" id="shipper-id">
+              <div class="form-group">
+                <label for="shipper-name">Shipper Name:</label>
+                <input type="text" id="shipper-name" required>
+              </div>
+              <div class="form-group">
+                <label for="shipper-contact">Contact Person:</label>
+                <input type="text" id="shipper-contact" required>
+              </div>
+              <div class="form-group">
+                <label for="shipper-phone">Phone:</label>
+                <input type="tel" id="shipper-phone" required>
+              </div>
+              <div class="form-group">
+                <label for="shipper-email">Email:</label>
+                <input type="email" id="shipper-email" required>
+              </div>
+              <button type="submit" class="submit-btn">Save Shipper</button>
+              <button type="button" id="clear-shipper-form" class="cancel-btn">Clear Form</button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Manifest Processor All Rights Reserved</p>
+    </footer>
+
+    <script src="script/resourceService.js"></script>
+    <script src="script/shipper.js"></script>
+  </body>
+</html>
