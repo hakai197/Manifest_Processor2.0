@@ -22,6 +22,9 @@
         <div class="header-top">
           <h1>Dock Management System</h1>
         </div>
+         <button @click="logout" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
         
         <nav class="desktop-nav">
           <ul>
@@ -260,8 +263,22 @@
             unassign,
             closeModal
           };
+            const logout = () => {
+            // Clear any user session/token
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            
+            // Redirect to login page
+            window.location.href = 'login.html';
+          };
+          
+          return {
+            // ... other properties and methods
+            logout
+          };
         }
       }).mount('#app');
+  
     </script>
     
     <script src="../script/resourceService.js"></script>
@@ -329,6 +346,30 @@
       li:hover {
         background-color: #f5f5f5;
       }
+      /* Logout Button Styles */
+.logout-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 15px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #d32f2f;
+}
+
+.logout-btn i {
+    font-size: 14px;
+}
     </style>
   </body>
 </html>
