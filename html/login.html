@@ -7,31 +7,229 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+    <!-- Load Vue.js -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        /* Enhanced Vue-specific styles */
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header img {
+            width: 120px;
+            margin-bottom: 15px;
+        }
+        
+        .login-header h1 {
+            color: #2c3e50;
+            margin: 10px 0;
+            font-size: 24px;
+        }
+        
+        .login-header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .login-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        .loading:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <img src="../img/NMShipping.png" alt="NM Shipping Logo">
-            <h1>Dock Management System</h1>
-            <p>Please login to continue</p>
+    <div id="app">
+        <div class="login-container">
+            <div class="login-header">
+                <img src="../img/NMShipping.png" alt="NM Shipping Logo">
+                <h1>Dock Management System</h1>
+                <p>Please login to continue</p>
+            </div>
+            
+            <form @submit.prevent="handleLogin">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        v-model="loginForm.username" 
+                        required 
+                        placeholder="Enter your username"
+                        :disabled="loading"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        v-model="loginForm.password" 
+                        required 
+                        placeholder="Enter your password"
+                        :disabled="loading"
+                    >
+                </div>
+                
+                <button 
+                    type="submit" 
+                    class="login-btn"
+                    :class="{ loading: loading }"
+                    :disabled="loading"
+                >
+                    <span v-if="!loading">Login</span>
+                    <span v-if="loading">Logging in...</span>
+                </button>
+                <div 
+                    id="errorMessage" 
+                    class="error-message"
+                    :class="{ show: errorMessage }"
+                >
+                    {{ errorMessage }}
+                </div>
+            </form>
         </div>
-        
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required placeholder="Enter your username">
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required placeholder="Enter your password">
-            </div>
-            
-            <button type="submit" class="login-btn">Login</button>
-            <div id="errorMessage" class="error-message">Invalid username or password</div>
-        </form>
     </div>
 
-    <script src="../script/login.js"></script>
+    <script>
+        const { createApp, ref } = Vue;
+        
+        createApp({
+            setup() {
+                // Form data
+                const loginForm = ref({
+                    username: '',
+                    password: ''
+                });
+                
+                // UI state
+                const loading = ref(false);
+                const errorMessage = ref('');
+                
+                // Mock users for demonstration
+                const validUsers = [
+                    { username: 'admin', password: 'admin123', role: 'admin' },
+                    { username: 'manager', password: 'manager123', role: 'manager' },
+                    { username: 'supervisor', password: 'supervisor123', role: 'supervisor' }
+                ];
+                
+                // Methods
+                const handleLogin = () => {
+                    errorMessage.value = '';
+                    loading.value = true;
+                    
+                    // Simulate API call with timeout
+                    setTimeout(() => {
+                        const user = validUsers.find(u => 
+                            u.username === loginForm.value.username && 
+                            u.password === loginForm.value.password
+                        );
+                        
+                        if (user) {
+                            // Successful login - in a real app, you would:
+                            // 1. Store the auth token
+                            // 2. Redirect to dashboard
+                            console.log('Login successful', user);
+                            alert(`Login successful! Redirecting to dashboard as ${user.role}`);
+                            // window.location.href = 'index.html';
+                        } else {
+                            errorMessage.value = 'Invalid username or password';
+                        }
+                        
+                        loading.value = false;
+                    }, 1000);
+                };
+                
+                return {
+                    loginForm,
+                    loading,
+                    errorMessage,
+                    handleLogin
+                };
+            }
+        }).mount('#app');
+    </script>
 </body>
 </html>

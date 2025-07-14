@@ -8,92 +8,314 @@
     <link rel="icon" href="./icon/custom.ico">
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" />
+    <!-- Load Vue.js -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+      /* Vue-specific styles */
+      .status-available { color: #4caf50; }
+      .status-assigned { color: #2196f3; }
+      .status-maintenance { color: #ff9800; }
+      .action-btn {
+        padding: 5px 10px;
+        margin: 0 3px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .edit-btn { 
+        background-color: #2196f3; 
+        color: white;
+      }
+      .delete-btn { 
+        background-color: #f44336; 
+        color: white;
+      }
+      .submit-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      .cancel-btn {
+        background-color: #9e9e9e;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      select, input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        box-sizing: border-box;
+      }
+    </style>
   </head>
   <body>
-    <header>
-      <div class="logo-container">
-        <img src="../img/NMShipping.png" alt="NM Shipping Logo">
-      </div>
-      <div class="header-top">
-        <h1>Trailer Management</h1>
-      </div>
-      
-      <nav class="desktop-nav">
-        <ul>
-          <li><a href="index.html" class="nav-btn">Dashboard</a></li>
-          <li><a href="assingment.html" class="nav-btn">Assignment Manager</a></li>
-          <li><a href="shipper.html" class="nav-btn">Shipper Management</a></li>
-          <li><a href="employee.html" class="nav-btn">Employee Management</a></li>
-        </ul>
-      </nav>
-    </header>
-
-    <main>
-      <section class="dashboard-grid">
-        <div class="dashboard-card wide-card">
-          <div class="card-header">Trailer Inventory</div>
-          <div class="filter-container">
-            <input type="text" id="trailer-inventory-filter" placeholder="Filter trailers...">
-          </div>
-          <div class="card-content">
-            <table class="management-table">
-              <thead>
-                <tr>
-                  <th>Trailer ID</th>
-                  <th>Shipper</th>
-                  <th>Status</th>
-                  <th>Location</th>
-                  <th>Last Updated</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="trailers-table">
-                <!-- Will be populated by JavaScript -->
-              </tbody>
-            </table>
-          </div>
+    <div id="app">
+      <header>
+        <div class="logo-container">
+          <img src="../img/NMShipping.png" alt="NM Shipping Logo">
+        </div>
+        <div class="header-top">
+          <h1>Trailer Management</h1>
         </div>
         
-        <div class="dashboard-card">
-          <div class="card-header">Add/Edit Trailer</div>
-          <div class="card-content">
-            <form id="trailer-form">
-              <input type="hidden" id="trailer-id">
-              <div class="form-group">
-                <label for="trailer-number">Trailer Number:</label>
-                <input type="text" id="trailer-number" required>
-              </div>
-              <div class="form-group">
-                <label for="trailer-shipper">Shipper:</label>
-                <select id="trailer-shipper" required>
-                  <!-- Will be populated by JavaScript -->
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="trailer-status">Status:</label>
-                <select id="trailer-status" required>
-                  <option value="available">Available</option>
-                  <option value="assigned">Assigned</option>
-                  <option value="maintenance">Maintenance</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="trailer-location">Location:</label>
-                <input type="text" id="trailer-location">
-              </div>
-              <button type="submit" class="submit-btn">Save Trailer</button>
-              <button type="button" id="clear-trailer-form" class="cancel-btn">Clear Form</button>
-            </form>
+        <nav class="desktop-nav">
+          <ul>
+            <li><a href="index.html" class="nav-btn">Dashboard</a></li>
+            <li><a href="assingment.html" class="nav-btn">Assignment Manager</a></li>
+            <li><a href="shipper.html" class="nav-btn">Shipper Management</a></li>
+            <li><a href="employee.html" class="nav-btn">Employee Management</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main>
+        <section class="dashboard-grid">
+          <div class="dashboard-card wide-card">
+            <div class="card-header">Trailer Inventory</div>
+            <div class="filter-container">
+              <input type="text" v-model="trailerFilter" placeholder="Filter trailers...">
+            </div>
+            <div class="card-content">
+              <table class="management-table">
+                <thead>
+                  <tr>
+                    <th>Trailer ID</th>
+                    <th>Trailer Number</th>
+                    <th>Shipper</th>
+                    <th>Status</th>
+                    <th>Location</th>
+                    <th>Last Updated</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="trailer in filteredTrailers" :key="trailer.id">
+                    <td>{{ trailer.id }}</td>
+                    <td>{{ trailer.number }}</td>
+                    <td>{{ getShipperName(trailer.shipperId) }}</td>
+                    <td :class="'status-' + trailer.status.toLowerCase()">
+                      {{ formatStatus(trailer.status) }}
+                    </td>
+                    <td>{{ trailer.location || 'N/A' }}</td>
+                    <td>{{ formatDate(trailer.lastUpdated) }}</td>
+                    <td>
+                      <button @click="editTrailer(trailer)" class="action-btn edit-btn">
+                        <i class="fas fa-edit"></i> Edit
+                      </button>
+                      <button @click="deleteTrailer(trailer.id)" class="action-btn delete-btn">
+                        <i class="fas fa-trash"></i> Delete
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      </section>
-    </main>
+          
+          <div class="dashboard-card">
+            <div class="card-header">Add/Edit Trailer</div>
+            <div class="card-content">
+              <form @submit.prevent="saveTrailer">
+                <input type="hidden" v-model="currentTrailer.id">
+                <div class="form-group">
+                  <label for="trailer-number">Trailer Number:</label>
+                  <input type="text" id="trailer-number" v-model="currentTrailer.number" required>
+                </div>
+                <div class="form-group">
+                  <label for="trailer-shipper">Shipper:</label>
+                  <select id="trailer-shipper" v-model="currentTrailer.shipperId" required>
+                    <option value="">-- Select Shipper --</option>
+                    <option v-for="shipper in shippers" :value="shipper.id" :key="shipper.id">
+                      {{ shipper.name }}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="trailer-status">Status:</label>
+                  <select id="trailer-status" v-model="currentTrailer.status" required>
+                    <option value="available">Available</option>
+                    <option value="assigned">Assigned</option>
+                    <option value="maintenance">Maintenance</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="trailer-location">Location:</label>
+                  <input type="text" id="trailer-location" v-model="currentTrailer.location">
+                </div>
+                <button type="submit" class="submit-btn">
+                  {{ currentTrailer.id ? 'Update' : 'Add' }} Trailer
+                </button>
+                <button type="button" @click="clearForm" class="cancel-btn">Clear Form</button>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
 
-    <footer>
-      <p>&copy; 2025 Manifest Processor All Rights Reserved</p>
-    </footer>
+      <footer>
+        <p>&copy; 2025 Manifest Processor All Rights Reserved</p>
+      </footer>
+    </div>
 
-    <script src="script/resourceService.js"></script>
-    <script src="script/trailer.js"></script>
+    <script>
+      const { createApp, ref, computed } = Vue;
+      
+      createApp({
+        setup() {
+          // Data properties
+          const trailerFilter = ref('');
+          
+          const shippers = ref([
+            { id: 1, name: 'ABC Logistics' },
+            { id: 2, name: 'Global Freight' },
+            { id: 3, name: 'Oceanic Shipping' },
+            { id: 4, name: 'Continental Transport' }
+          ]);
+          
+          const trailers = ref([
+            { 
+              id: 1, 
+              number: 'TR-001', 
+              shipperId: 1, 
+              status: 'available', 
+              location: 'Yard A', 
+              lastUpdated: new Date('2023-05-15T08:30:00') 
+            },
+            { 
+              id: 2, 
+              number: 'TR-002', 
+              shipperId: 2, 
+              status: 'assigned', 
+              location: 'Dock 5', 
+              lastUpdated: new Date('2023-05-15T09:15:00') 
+            },
+            { 
+              id: 3, 
+              number: 'TR-003', 
+              shipperId: 3, 
+              status: 'maintenance', 
+              location: 'Repair Bay', 
+              lastUpdated: new Date('2023-05-14T14:20:00') 
+            },
+            { 
+              id: 4, 
+              number: 'TR-004', 
+              shipperId: 4, 
+              status: 'available', 
+              location: 'Yard B', 
+              lastUpdated: new Date('2023-05-15T10:45:00') 
+            },
+          ]);
+          
+          const currentTrailer = ref({
+            id: null,
+            number: '',
+            shipperId: '',
+            status: 'available',
+            location: '',
+            lastUpdated: new Date()
+          });
+          
+          // Computed properties
+          const filteredTrailers = computed(() => {
+            const filter = trailerFilter.value.toLowerCase();
+            return trailers.value.filter(trailer => 
+              trailer.number.toLowerCase().includes(filter) ||
+              getShipperName(trailer.shipperId).toLowerCase().includes(filter) ||
+              trailer.status.toLowerCase().includes(filter) ||
+              (trailer.location && trailer.location.toLowerCase().includes(filter))
+            );
+          });
+          
+          // Methods
+          const getShipperName = (shipperId) => {
+            const shipper = shippers.value.find(s => s.id === shipperId);
+            return shipper ? shipper.name : 'Unknown';
+          };
+          
+          const formatStatus = (status) => {
+            return status.charAt(0).toUpperCase() + status.slice(1);
+          };
+          
+          const formatDate = (date) => {
+            return new Date(date).toLocaleString();
+          };
+          
+          const saveTrailer = () => {
+            if (currentTrailer.value.id) {
+              // Update existing trailer
+              const index = trailers.value.findIndex(t => t.id === currentTrailer.value.id);
+              if (index !== -1) {
+                trailers.value[index] = { 
+                  ...currentTrailer.value,
+                  lastUpdated: new Date()
+                };
+              }
+            } else {
+              // Add new trailer
+              const newId = trailers.value.length > 0 
+                ? Math.max(...trailers.value.map(t => t.id)) + 1 
+                : 1;
+              
+              trailers.value.push({
+                ...currentTrailer.value,
+                id: newId,
+                lastUpdated: new Date()
+              });
+            }
+            
+            clearForm();
+          };
+          
+          const editTrailer = (trailer) => {
+            currentTrailer.value = { ...trailer };
+          };
+          
+          const deleteTrailer = (id) => {
+            if (confirm('Are you sure you want to delete this trailer?')) {
+              trailers.value = trailers.value.filter(t => t.id !== id);
+            }
+          };
+          
+          const clearForm = () => {
+            currentTrailer.value = {
+              id: null,
+              number: '',
+              shipperId: '',
+              status: 'available',
+              location: '',
+              lastUpdated: new Date()
+            };
+          };
+          
+          return {
+            trailerFilter,
+            shippers,
+            trailers,
+            currentTrailer,
+            filteredTrailers,
+            getShipperName,
+            formatStatus,
+            formatDate,
+            saveTrailer,
+            editTrailer,
+            deleteTrailer,
+            clearForm
+          };
+        }
+      }).mount('#app');
+    </script>
   </body>
 </html>

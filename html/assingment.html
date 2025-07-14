@@ -8,86 +8,341 @@
     <link rel="icon" href="./icon/custom.ico">
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" />
+    <!-- Load Vue.js -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+      /* Vue-specific styles */
+      .status-pending { color: #ff9800; }
+      .status-active { color: #4caf50; }
+      .status-completed { color: #2196f3; }
+      .action-btn {
+        padding: 5px 10px;
+        margin: 0 3px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .edit-btn { background-color: #ffc107; }
+      .complete-btn { background-color: #4caf50; color: white; }
+      .cancel-btn { background-color: #f44336; color: white; }
+      .submit-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      select, input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+      }
+    </style>
   </head>
   <body>
-    <header>
-      <div class="logo-container">
-        <img src="../img/NMShipping.png" alt="NM Shipping Logo">
-      </div>
-      <div class="header-top">
-        <h1>Assignment Manager</h1>
-      </div>
-      
-      <nav class="desktop-nav">
-        <ul>
-          <li><a href="index.html" class="nav-btn">Dashboard</a></li>
-          <li><a href="trailer.html" class="nav-btn">Trailer Management</a></li>
-          <li><a href="shipper.html" class="nav-btn">Shipper Management</a></li>
-          <li><a href="employee.html" class="nav-btn">Employee Management</a></li>
-        </ul>
-      </nav>
-    </header>
-
-    <main>
-      <section class="dashboard-grid">
-        <div class="dashboard-card wide-card">
-          <div class="card-header">Current Assignments</div>
-          <div class="filter-container">
-            <input type="text" id="assignment-filter" placeholder="Filter assignments...">
-          </div>
-          <div class="card-content">
-            <table class="management-table">
-              <thead>
-                <tr>
-                  <th>Door</th>
-                  <th>Trailer</th>
-                  <th>Unloader</th>
-                  <th>Start Time</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="assignments-table">
-            
-              </tbody>
-            </table>
-          </div>
+    <div id="app">
+      <header>
+        <div class="logo-container">
+          <img src="../img/NMShipping.png" alt="NM Shipping Logo">
+        </div>
+        <div class="header-top">
+          <h1>Assignment Manager</h1>
         </div>
         
-        <div class="dashboard-card">
-          <div class="card-header">Create New Assignment</div>
-          <div class="card-content">
-            <form id="new-assignment-form">
-              <div class="form-group">
-                <label for="assignment-door">Select Door:</label>
-                <select id="assignment-door" required>
-                 
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="assignment-trailer">Select Trailer:</label>
-                <select id="assignment-trailer" required>
-                  
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="assignment-unloader">Select Unloader:</label>
-                <select id="assignment-unloader" required>
-                  
-                </select>
-              </div>
-              <button type="submit" class="submit-btn">Create Assignment</button>
-            </form>
+        <nav class="desktop-nav">
+          <ul>
+            <li><a href="index.html" class="nav-btn">Dashboard</a></li>
+            <li><a href="trailer.html" class="nav-btn">Trailer Management</a></li>
+            <li><a href="shipper.html" class="nav-btn">Shipper Management</a></li>
+            <li><a href="employee.html" class="nav-btn">Employee Management</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main>
+        <section class="dashboard-grid">
+          <div class="dashboard-card wide-card">
+            <div class="card-header">Current Assignments</div>
+            <div class="filter-container">
+              <input type="text" v-model="assignmentFilter" placeholder="Filter assignments...">
+            </div>
+            <div class="card-content">
+              <table class="management-table">
+                <thead>
+                  <tr>
+                    <th>Door</th>
+                    <th>Trailer</th>
+                    <th>Unloader</th>
+                    <th>Start Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="assignment in filteredAssignments" :key="assignment.id">
+                    <td>{{ assignment.door }}</td>
+                    <td>{{ assignment.trailer }}</td>
+                    <td>{{ assignment.unloader }}</td>
+                    <td>{{ formatDate(assignment.startTime) }}</td>
+                    <td :class="'status-' + assignment.status.toLowerCase()">
+                      {{ assignment.status }}
+                    </td>
+                    <td>
+                      <button v-if="assignment.status === 'PENDING'" @click="startAssignment(assignment.id)" class="action-btn edit-btn">
+                        <i class="fas fa-play"></i> Start
+                      </button>
+                      <button v-if="assignment.status === 'ACTIVE'" @click="completeAssignment(assignment.id)" class="action-btn complete-btn">
+                        <i class="fas fa-check"></i> Complete
+                      </button>
+                      <button @click="cancelAssignment(assignment.id)" class="action-btn cancel-btn">
+                        <i class="fas fa-times"></i> Cancel
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      </section>
-    </main>
+          
+          <div class="dashboard-card">
+            <div class="card-header">Create New Assignment</div>
+            <div class="card-content">
+              <form @submit.prevent="createNewAssignment">
+                <div class="form-group">
+                  <label for="assignment-door">Select Door:</label>
+                  <select id="assignment-door" v-model="newAssignment.doorId" required>
+                    <option value="">-- Select Door --</option>
+                    <option v-for="door in availableDoors" :value="door.id" :key="door.id">
+                      {{ door.name }} ({{ door.status }})
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="assignment-trailer">Select Trailer:</label>
+                  <select id="assignment-trailer" v-model="newAssignment.trailerId" required>
+                    <option value="">-- Select Trailer --</option>
+                    <option v-for="trailer in availableTrailers" :value="trailer.id" :key="trailer.id">
+                      {{ trailer.number }} ({{ trailer.type }})
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="assignment-unloader">Select Unloader:</label>
+                  <select id="assignment-unloader" v-model="newAssignment.unloaderId" required>
+                    <option value="">-- Select Unloader --</option>
+                    <option v-for="unloader in availableUnloaders" :value="unloader.id" :key="unloader.id">
+                      {{ unloader.name }} ({{ unloader.skillLevel }})
+                    </option>
+                  </select>
+                </div>
+                <button type="submit" class="submit-btn">Create Assignment</button>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
 
-    <footer>
-      <p>&copy; 2025 Manifest Processor All Rights Reserved</p>
-    </footer>
+      <footer>
+        <p>&copy; 2025 Manifest Processor All Rights Reserved</p>
+      </footer>
+    </div>
 
-    <script src="script/resourceService.js"></script>
-    <script src="script/assignment.js"></script>
+    <script>
+      const { createApp, ref, computed, onMounted } = Vue;
+      
+      createApp({
+        setup() {
+          // Data properties
+          const assignmentFilter = ref('');
+          
+          const availableDoors = ref([
+            { id: 1, name: 'Door 1', status: 'Available' },
+            { id: 2, name: 'Door 2', status: 'Available' },
+            { id: 3, name: 'Door 3', status: 'Maintenance' },
+            { id: 4, name: 'Door 4', status: 'Available' },
+          ]);
+          
+          const availableTrailers = ref([
+            { id: 1, number: 'TR-001', type: 'Dry Van' },
+            { id: 2, number: 'TR-002', type: 'Reefer' },
+            { id: 3, number: 'TR-003', type: 'Flatbed' },
+            { id: 4, number: 'TR-004', type: 'Dry Van' },
+          ]);
+          
+          const availableUnloaders = ref([
+            { id: 1, name: 'John Doe', skillLevel: 'Expert' },
+            { id: 2, name: 'Jane Smith', skillLevel: 'Intermediate' },
+            { id: 3, name: 'Mike Johnson', skillLevel: 'Beginner' },
+            { id: 4, name: 'Sarah Williams', skillLevel: 'Expert' },
+          ]);
+          
+          const assignments = ref([
+            { 
+              id: 1, 
+              door: 'Door 5', 
+              trailer: 'TR-005', 
+              unloader: 'Bob Brown', 
+              startTime: new Date('2023-05-15T08:30:00'), 
+              status: 'ACTIVE',
+              doorId: 5,
+              trailerId: 5,
+              unloaderId: 5
+            },
+            { 
+              id: 2, 
+              door: 'Door 6', 
+              trailer: 'TR-006', 
+              unloader: 'Alice Green', 
+              startTime: new Date('2023-05-15T09:15:00'), 
+              status: 'PENDING',
+              doorId: 6,
+              trailerId: 6,
+              unloaderId: 6
+            },
+          ]);
+          
+          const newAssignment = ref({
+            doorId: '',
+            trailerId: '',
+            unloaderId: ''
+          });
+          
+          // Computed properties
+          const filteredAssignments = computed(() => {
+            const filter = assignmentFilter.value.toLowerCase();
+            return assignments.value.filter(assignment => 
+              assignment.door.toLowerCase().includes(filter) ||
+              assignment.trailer.toLowerCase().includes(filter) ||
+              assignment.unloader.toLowerCase().includes(filter) ||
+              assignment.status.toLowerCase().includes(filter)
+            );
+          });
+          
+          // Methods
+          const formatDate = (date) => {
+            return new Date(date).toLocaleString();
+          };
+          
+          const createNewAssignment = () => {
+            const door = availableDoors.value.find(d => d.id == newAssignment.value.doorId);
+            const trailer = availableTrailers.value.find(t => t.id == newAssignment.value.trailerId);
+            const unloader = availableUnloaders.value.find(u => u.id == newAssignment.value.unloaderId);
+            
+            if (door && trailer && unloader) {
+              const newId = assignments.value.length > 0 
+                ? Math.max(...assignments.value.map(a => a.id)) + 1 
+                : 1;
+              
+              assignments.value.push({
+                id: newId,
+                door: door.name,
+                trailer: trailer.number,
+                unloader: unloader.name,
+                startTime: new Date(),
+                status: 'PENDING',
+                doorId: door.id,
+                trailerId: trailer.id,
+                unloaderId: unloader.id
+              });
+              
+              // Remove assigned resources from available lists
+              availableDoors.value = availableDoors.value.filter(d => d.id !== door.id);
+              availableTrailers.value = availableTrailers.value.filter(t => t.id !== trailer.id);
+              availableUnloaders.value = availableUnloaders.value.filter(u => u.id !== unloader.id);
+              
+              // Reset form
+              newAssignment.value = {
+                doorId: '',
+                trailerId: '',
+                unloaderId: ''
+              };
+            }
+          };
+          
+          const startAssignment = (assignmentId) => {
+            const assignment = assignments.value.find(a => a.id === assignmentId);
+            if (assignment) {
+              assignment.status = 'ACTIVE';
+              assignment.startTime = new Date();
+            }
+          };
+          
+          const completeAssignment = (assignmentId) => {
+            const assignment = assignments.value.find(a => a.id === assignmentId);
+            if (assignment) {
+              assignment.status = 'COMPLETED';
+              
+              // Return resources to available lists
+              availableDoors.value.push({ 
+                id: assignment.doorId, 
+                name: assignment.door, 
+                status: 'Available' 
+              });
+              
+              availableTrailers.value.push({ 
+                id: assignment.trailerId, 
+                number: assignment.trailer, 
+                type: 'Unknown' 
+              });
+              
+              availableUnloaders.value.push({ 
+                id: assignment.unloaderId, 
+                name: assignment.unloader, 
+                skillLevel: 'Unknown' 
+              });
+            }
+          };
+          
+          const cancelAssignment = (assignmentId) => {
+            const assignment = assignments.value.find(a => a.id === assignmentId);
+            if (assignment && confirm('Are you sure you want to cancel this assignment?')) {
+              if (assignment.status !== 'COMPLETED') {
+                // Return resources to available lists
+                availableDoors.value.push({ 
+                  id: assignment.doorId, 
+                  name: assignment.door, 
+                  status: 'Available' 
+                });
+                
+                availableTrailers.value.push({ 
+                  id: assignment.trailerId, 
+                  number: assignment.trailer, 
+                  type: 'Unknown' 
+                });
+                
+                availableUnloaders.value.push({ 
+                  id: assignment.unloaderId, 
+                  name: assignment.unloader, 
+                  skillLevel: 'Unknown' 
+                });
+              }
+              
+              // Remove assignment
+              assignments.value = assignments.value.filter(a => a.id !== assignmentId);
+            }
+          };
+          
+          return {
+            assignmentFilter,
+            availableDoors,
+            availableTrailers,
+            availableUnloaders,
+            assignments,
+            newAssignment,
+            filteredAssignments,
+            formatDate,
+            createNewAssignment,
+            startAssignment,
+            completeAssignment,
+            cancelAssignment
+          };
+        }
+      }).mount('#app');
+    </script>
   </body>
 </html>
