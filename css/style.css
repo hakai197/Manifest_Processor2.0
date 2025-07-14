@@ -258,7 +258,7 @@ header {
   margin: 0.5rem 0;
   font-weight: bold;
 }
-/* Add these to your existing style.css */
+
 
 /* Form Styles */
 .form-group {
@@ -348,6 +348,28 @@ header {
   background-color: var(--accent-color);
   color: white;
 }
+ .logout-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 15px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #d32f2f;
+}
+
+.logout-btn i {
+    font-size: 14px;
 
 /* Card Modifiers */
 .wide-card {
@@ -447,4 +469,6 @@ header {
     text-align: left;
     margin-top: 0.5rem;
   }
+ 
+}
 }
